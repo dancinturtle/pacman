@@ -5,12 +5,27 @@
 </head>
 
 <body>
+  <div id="stats">
+    <div class="textblock">
+      <p id="lives">1 UP</p>
+      <p id="score">0</p>
+    </div>
+    <div class="textblock">
+      <p>HIGH SCORE</p>
+      <p align="right">1500</p>
+    </div>
+  </div>
 
  <svg id="svg" xmlns="http://www.w3.org/2000/svg">
 <!--
    <rect class="obstacleRec" x="130" y="55" rx="10" ry="10"></rect>
    <polygon class="obstacleL" points="77,55 77,170 170,170 170,133 97,133 97,55"></polygon> -->
    <image id="pacman" xlink:href="pacman.gif" height="20px" width="20px"></image>
+   <image id="blinky" xlink:href="blinky.gif" height="20px" width="20px"></image>
+   <image id="clyde" xlink:href="clyde.gif" height="20px" width="20px"></image>
+   <image id="inky" xlink:href="inky.gif" height="20px" width="20px"></image>
+   <image id="pinky" xlink:href="pinky.gif" height="20px" width="20px"></image>
+
 
  </svg>
 
@@ -43,8 +58,28 @@ function displayWorld() {
 
 var pacman = {
    x: 13,
-   y: 23
+   y: 23,
+   score: 0
  }
+function Ghost(name, x, y){
+  this.name = name,
+  this.x = x,
+  this.y = y
+}
+
+var blinky = new Ghost("blinky", 12, 14);
+var clyde = new Ghost("clyde", 13, 13);
+var pinky = new Ghost("pinky", 14, 15);
+var inky = new Ghost("inky", 15, 14);
+var ghosts= [blinky, clyde, pinky, inky];
+function displayGhosts(array){
+  for(var i=0; i<array.length; i++){
+    console.log("ghosts array", array[i]);
+    document.getElementById(array[i].name).style.y=array[i].y*25;
+    document.getElementById(array[i].name).style.x=array[i].x*25;
+  }
+}
+displayGhosts(ghosts);
 
 function displayPacman(){
    document.getElementById('pacman').style.y = pacman.y*25;
@@ -85,6 +120,33 @@ document.onkeydown = function(e){
 
  }
 
+ // <polyline points="20,20 40,25 60,40 80,120 120,140 200,180"
+ //  style="fill:none;stroke:black;stroke-width:3" />
+ function Borders(coorda, coordb, coordc, coordd){
+   this.info = {coorda:coorda, coordb:coordb, coordc: coordc, coordd:coordd, style: "stroke: white; fill: none; stroke-width: 6;"};
+   this.initialize = function(){
+     var border = makeSVG('polyline',
+      { points: this.info.coorda + " " + this.info.coordb + " " + this.info.coordc + " " + this.info.coordd,
+        style: this.info.style
+      });
+    document.getElementById('svg').appendChild(border);
+   }
+   var makeSVG = function(tag, attrs) {
+         var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+         for (var k in attrs)
+         {
+             el.setAttribute(k, attrs[k]);
+         }
+         return el;
+     } //closes makeSVG
+
+     this.initialize();
+ }
+ var outerBorderTop = new Borders("0, 350", "0,0", "700, 0", "700, 360");
+ var outerBorderBottom = new Borders("0, 400", "0, 780", "700, 780", "700, 400");
+ var ghostBoxLeft = new Borders("320, 320", "270, 320", "270, 400", "350, 400");
+ var ghostBoxRight = new Borders("350, 400", "430, 400", "430, 320", "380, 320");
+ // var ghostBox = new Borders(500, 500, 300, 300);
 
  function Rectangle(x, y, width, height){
    this.info = {x: x, y: y, width: width, height: height, rx: 10, ry: 10, style: "fill: blue; stroke: yellow; stroke-width: 2;"};
@@ -157,30 +219,30 @@ document.onkeydown = function(e){
 
     this.initialize();
  }
- ObstacleL("50, 50", "50, 195", "148, 195", "148, 150", "98, 150", "98, 50");
- ObstacleL("600, 50", "600, 150", "550, 150", "550, 195", "645, 195", "645, 50");
- ObstacleL("100, 475", "100, 570", "220, 570", "220, 525", "145, 525", "145, 475");
- ObstacleL("175, 400", "175, 495", "295, 495", "295, 450", "220, 450", "220, 400");
- ObstacleL("475, 400", "475, 450", "400, 450", "400, 495", "520, 495", "520, 400");
- ObstacleL("550, 475", "550, 525", "475, 525", "475, 570", "595, 570", "595, 475");
- ObstacleL("50, 600", "50, 720", "95, 720", "95, 645", "145, 645", "145, 600");
- ObstacleL("550, 600", "550, 645", "600, 645", "600, 720", "645, 720", "645, 600");
+ var oneL = new ObstacleL("50, 50", "50, 195", "148, 195", "148, 150", "98, 150", "98, 50");
+ var twoL = new ObstacleL("600, 50", "600, 150", "550, 150", "550, 195", "645, 195", "645, 50");
+ var threeL = new ObstacleL("100, 475", "100, 570", "220, 570", "220, 525", "145, 525", "145, 475");
+ var fourL = new ObstacleL("175, 400", "175, 495", "295, 495", "295, 450", "220, 450", "220, 400");
+ var fiveL = new ObstacleL("475, 400", "475, 450", "400, 450", "400, 495", "520, 495", "520, 400");
+ var sixL = new ObstacleL("550, 475", "550, 525", "475, 525", "475, 570", "595, 570", "595, 475");
+ var sevenL = new ObstacleL("50, 600", "50, 720", "95, 720", "95, 645", "145, 645", "145, 600");
+ var eightL = new ObstacleL("550, 600", "550, 645", "600, 645", "600, 720", "645, 720", "645, 600");
  //rectangle(x, y, width, height);
- Rectangle(125, 50, 95, 70);
- Rectangle(475, 50, 95, 70);
- Rectangle(25, 225, 45, 120);
- Rectangle(625, 225, 45, 145);
- Rectangle(325, 675, 45, 70);
- Rectangle(250, 600, 195, 45);
- ObstacleU("250, 50", "250, 195", "295, 195", "295, 95", "400, 95", "400, 195", "445, 195", "445, 50");
- ObstacleU("175, 150", "175, 225", "100, 225", "100, 270", "175, 270", "175, 345", "220, 345", "220, 150");
- ObstacleU("325, 125", "325, 225", "250, 225", "250, 270", "445, 270", "445, 225", "370, 225", "370, 125");
- ObstacleU("475, 150", "475, 345", "520, 345", "520, 270", "595, 270", "595, 225", "520, 225", "520, 150");
- ObstacleU("100, 300", "100, 400", "25, 400", "25, 570", "70, 570", "70, 445", "145, 445", "145, 300");
- ObstacleU("325, 450", "325, 525", "250, 525", "250, 570", "445, 570", "445, 525", "370, 525", "370, 450");
- ObstacleU("550, 300", "550, 445", "625, 445", "625, 570", "670, 570", "670, 400", "595, 400", "595, 300");
- ObstacleU("175, 600", "175, 675", "125, 675", "125, 720", "295, 720", "295, 675", "220, 675", "220, 600");
- ObstacleU("475, 600", "475, 675", "400, 675", "400, 720", "570, 720", "570, 675", "520, 675", "520, 600");
+ var oneR = new Rectangle(125, 50, 95, 70);
+ var twoR = new Rectangle(475, 50, 95, 70);
+ var threeR = new Rectangle(25, 225, 45, 120);
+ var fourR = new Rectangle(625, 225, 45, 145);
+ var fiveR = new Rectangle(325, 675, 45, 70);
+ var sixR = new Rectangle(250, 600, 195, 45);
+ var oneU = new ObstacleU("250, 50", "250, 195", "295, 195", "295, 95", "400, 95", "400, 195", "445, 195", "445, 50");
+ var twoU = new ObstacleU("175, 150", "175, 225", "100, 225", "100, 270", "175, 270", "175, 345", "220, 345", "220, 150");
+ var threeU = new ObstacleU("325, 125", "325, 225", "250, 225", "250, 270", "445, 270", "445, 225", "370, 225", "370, 125");
+ var fourU = new ObstacleU("475, 150", "475, 345", "520, 345", "520, 270", "595, 270", "595, 225", "520, 225", "520, 150");
+ var fiveU = new ObstacleU("100, 300", "100, 400", "25, 400", "25, 570", "70, 570", "70, 445", "145, 445", "145, 300");
+ var sixU = new ObstacleU("325, 450", "325, 525", "250, 525", "250, 570", "445, 570", "445, 525", "370, 525", "370, 450");
+ var sevenU = new ObstacleU("550, 300", "550, 445", "625, 445", "625, 570", "670, 570", "670, 400", "595, 400", "595, 300");
+ var eightU = new ObstacleU("175, 600", "175, 675", "125, 675", "125, 720", "295, 720", "295, 675", "220, 675", "220, 600");
+ var nineU = new ObstacleU("475, 600", "475, 675", "400, 675", "400, 720", "570, 720", "570, 675", "520, 675", "520, 600");
 
 
  function MakeCoin(cx, cy, r){
@@ -226,17 +288,18 @@ document.onkeydown = function(e){
    [9,9,9,9,9,9,1,9,9,0,9,9,9,9,9,9,9,9,0,9,9,1,9,9,9,9,9,9],
    [9,9,9,9,9,9,1,9,9,0,0,0,0,0,0,0,0,0,0,9,9,1,9,9,9,9,9,9],
    [9,9,9,1,1,1,1,9,9,9,9,9,0,9,9,0,9,9,9,9,9,1,1,1,1,9,9,9],
-   [9,9,9,1,9,9,1,9,9,9,9,9,0,9,9,0,9,9,9,9,9,1,0,0,1,9,9,9],
-   [9,9,9,1,9,9,1,1,1,1,0,0,0,9,9,0,0,0,1,1,1,1,0,0,1,9,9,9],
-   [9,9,9,1,9,9,9,9,9,1,9,9,9,9,9,9,9,9,1,0,0,0,0,0,1,9,9,9],
-   [9,9,9,1,9,9,9,9,9,1,9,9,9,9,9,9,9,9,1,0,0,0,0,0,1,9,9,9],
+   [9,9,9,1,9,9,1,9,9,9,9,9,0,9,9,0,9,9,9,9,9,1,9,9,1,9,9,9],
+   [9,9,9,1,9,9,1,1,1,1,0,0,0,9,9,0,0,0,1,1,1,1,9,9,1,9,9,9],
+   [9,9,9,1,9,9,9,9,9,1,9,9,9,9,9,9,9,9,1,9,9,9,9,9,1,9,9,9],
+   [9,9,9,1,9,9,9,9,9,1,9,9,9,9,9,9,9,9,1,9,9,9,9,9,1,9,9,9],
    [9,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,9],
-   [9,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,9],
-   [9,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,9],
-   [9,1,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,0,1,9],
-   [9,2,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,2,9],
-   [9,1,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,1,9],
-   [9,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,9]
+   [9,1,9,9,9,9,1,9,9,1,9,9,9,9,9,9,9,9,1,9,9,1,9,9,9,9,1,9],
+   [9,1,9,9,9,9,1,9,9,1,9,9,9,9,9,9,9,9,1,9,9,1,9,9,9,9,1,9],
+   [9,1,9,9,1,1,1,9,9,1,1,1,1,1,1,1,1,1,1,9,9,1,1,1,9,9,1,9],
+   [9,2,9,9,1,9,9,9,9,9,9,9,1,9,9,1,9,9,9,9,9,9,9,1,9,9,2,9],
+   [9,1,9,9,1,9,9,9,9,9,9,9,1,9,9,1,9,9,9,9,9,9,9,1,9,9,1,9],
+   [9,1,1,1,1,1,1,1,1,1,1,1,1,9,9,1,1,1,1,1,1,1,1,1,1,1,1,9],
+   [9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9]
  ]
  for (var i=0; i<coinsMap.length; i++){
    for(var j=0; j<coinsMap[i].length; j++){
@@ -244,28 +307,21 @@ document.onkeydown = function(e){
      var y = 25*i+10;
      if(coinsMap[i][j] == 1){
        var r = 3;
-       MakeCoin(x, y, r);
+       var newcoin = new MakeCoin(x, y, r);
      }
      else if(coinsMap[i][j] == 2){
        var r = 7;
-       MakeCoin(x, y, r);
+       var newcoin = new MakeCoin(x, y, r);
      }
    }
  }
- // MakeCoin(35, 35, 3);
- //
- // MakeCoin(60, 35, 3);
- // MakeCoin(85, 35, 3);
- // MakeCoin(110, 35, 3);
- // MakeCoin(110, 60, 3);
- // MakeCoin(110, 85, 3);
- // MakeCoin(35, 85, 5);
- // console.log("the coin", coins[0].cx.animVal.value, coins[0].cy.animVal.value, coins[1].cx.animVal.value, coins[1].cy.animVal.value);
 
  function detectCoinCollection(){
    for(var i=0; i<coins.length; i++){
      if(Math.abs(coins[i].cx.animVal.value - player.style.x) <= 10 && Math.abs(coins[i].cy.animVal.value - player.style.y) <= 10){
        document.getElementById('svg').removeChild(coins[i]);
+       pacman.score += 10;
+       document.getElementById('score').innerHTML = pacman.score;
        removeAtIndex(coins, i);
      }
     // console.log("nearby?", Math.abs(coins[i].cx.animVal.value - player.style.x),Math.abs(coins[i].cy.animVal.value - player.style.y));
