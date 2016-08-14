@@ -87,21 +87,40 @@ function Ghost(name, x, y){
   this.jiggleVertical = 0,
   this.jiggleHorizontal = 0,
   this.freedom = false,
+  //this.startpoint = {x: something, y: something}
   this.escape = function(){
-    if(this.x < 13){
+    console.log(this.name, "escaping", this.x, this.y, "starting", this.startpoint);
+    //if you want to go right and are able to
+    if(this.x < this.startpoint.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1] != 9){
+      this.dy = 0;
       this.dx = 0.25;
     }
-    else if(this.x > 14){
+    //if you want to go left and are able to
+    else if(this.x > this.startpoint.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1] != 9){
+      this.dy = 0;
       this.dx = -0.25;
     }
-    if(this.y > 12){
+    //if you want to go up and are able to
+    else if(this.y > this.startpoint.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)] != 9){
+      this.dx = 0;
       this.dy = -0.25;
+    }
+    //if you want to go down and are able to
+    else if(this.y < this.startpoint.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)] != 9){
+      this.dx = 0;
+      this.dy = 0.25;
     }
     this.x += this.dx;
     this.y += this.dy;
     displayGhosts(ghosts);
+    if(this.y == this.startpoint.y && this.x == this.startpoint.x){
+      this.freedom = true;
+      console.log("freedom", this.x, this.y);
+      // displayGhosts(ghosts);
+      huntingGhosts(this);
+    }
   }
-  this.float = function(){
+  this.hunt = function(){
     if(this.jiggleVertical > 4){
       //stop moving vertically
       this.dy = 0;
@@ -369,9 +388,13 @@ function Ghost(name, x, y){
 }
 
 var blinky = new Ghost("blinky", 13.5, 11.5);
+blinky.startpoint = {x: 18, y: 9};
 var clyde = new Ghost("clyde", 11.5, 14);
+clyde.startpoint = {x: 18, y: 17};
 var pinky = new Ghost("pinky", 13.5, 14);
+pinky.startpoint = {x: 9, y:9};
 var inky = new Ghost("inky", 15.5, 14);
+inky.startpoint = {x: 9, y:17};
 var ghosts= [blinky, clyde, pinky, inky];
 
 function displayGhosts(array){
@@ -385,24 +408,26 @@ displayGhosts(ghosts);
 
 function findTrappedGhosts(array){
   for(var i=0; i<array.length; i++){
-    if(array[i].x < 17 && array[i].x > 10 && array[i].y < 16 && array[i].y > 12){
-      array[i].freedom = false;
+    if(array[i].freedom == false){
       var ghostEscape = setInterval(array[i].escape(), 100);
     }
-    else {
-      array[i].freedom = true;
-      clearInterval(ghostEscape);
-      var ghostFloat = setInterval(array[i].float(), 100);
-    }
+    // //if the ghosts are in the ghost box, freedom = false, start the escape()
+    // if(array[i].x < 17 && array[i].x > 10 && array[i].y < 16 && array[i].y > 12){
+    //   if(array[i].freedom == true){
+    //     array[i].freedom = false;
+    //   }
+    //}
   }
-  console.log("trapped ghosts", blinky.freedom, clyde.freedom, pinky.freedom);
+  console.log("trapped ghosts", blinky.freedom, clyde.freedom, pinky.freedom, inky.freedom);
 }
 
 // setInterval("findTrappedGhosts(ghosts)", 100);
-
+function huntingGhosts(ghost){
+      var huntingGhost = setInterval(ghost.hunt());
+}
 
   // var clydeEscape = setInterval("clyde.escape()", 100);
-  var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
+var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
   // if(clyde.freedom == true){
   //   console.log("clyde*************************************", clyde.freedom);
   //   clearInterval(clydeEscape);
