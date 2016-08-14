@@ -9,7 +9,6 @@
     <div class="textblock">
       <p id="whoseTurn">1 UP</p>
       <p id="score">0</p>
-      <p id="dead">still alive</p>
     </div>
     <div class="textblock">
       <p>HIGH SCORE</p>
@@ -449,17 +448,33 @@ function Ghost(name, x, y){
     this.x += this.dx;
     this.y += this.dy;
     if(Math.abs(this.x - pacman.x)<1 && Math.abs(this.y - pacman.y)<1){
-      pacman.alive = false;
-      pacman.deathcount++;
-      document.getElementById('dead').innerHTML = pacman.deathcount;
-      //take away an extra guy
+
+      if(pacman.alive == true){
+        pacman.alive = false;
+        pacman.deathcount++;
+      }
+      setResetGhostStatus();
+      document.getElementById('pacman').setAttribute("xlink:href", "sadpacman.gif");
+
       updateLives();
+
     }
-    // console.log("new coords", this.x, this.y);
+
     displayGhosts(ghosts);
-    // console.log("velocity", blinky.dx, blinky.dy);
   }
 }
+
+function nextRound(){
+  //first I want to wait two seconds, then reset ghosts and pacman's positions
+  setTimeout(function(){
+    pacman.alive = true;
+    ghostSetUp(ghosts);
+    pacman.x = 13.5;
+    pacman.y = 23;
+    displayPacman();
+    }, 2000);
+}
+
 function updateLives() {
   if(pacman.deathcount == 1){
     document.getElementById('one').setAttribute("style", "display: none");
@@ -470,24 +485,58 @@ function updateLives() {
   if(pacman.deathcount == 3){
     document.getElementById('three').setAttribute("style", "display: none");
   }
-
+  if(pacman.deathcount > 3){
+    var gameOver = confirm("Game over!!");
+    if(gameOver == true){
+      document.getElementById('one').setAttribute("style", "display: inline-block");
+      document.getElementById('two').setAttribute("style", "display: inline-block");
+      document.getElementById('three').setAttribute("style", "display: inline-block");
+      document.getElementById('score').innerHTML = "0";
+      pacman.score = 0;
+      pacman.deathcount = 0;
+      displayAllCoins();
+    }
+    else {
+      document.getElementById('whoseTurn').innerHTML = "GAME OVER";
+      document.getElementById('score').innerHTML = "GAME OVER";
+    }
+    pacman.deathcount =0;
+  }
 }
 
 var blinky = new Ghost("blinky", 13.5, 11.5);
-blinky.startpoint = {x: 18, y: 9};
-blinky.boxHelp = false;
 var clyde = new Ghost("clyde", 11.5, 14);
-clyde.startpoint = {x: 18, y: 17};
-clyde.boxHelp = true;
-clyde.boxTop = false;
 var pinky = new Ghost("pinky", 13.5, 14);
-pinky.startpoint = {x: 9, y:9};
-pinky.boxHelp = false;
 var inky = new Ghost("inky", 15.5, 14);
-inky.startpoint = {x: 9, y:17};
-inky.boxHelp = true;
-inky.boxTop = false;
+
 var ghosts= [blinky, clyde, pinky, inky];
+function ghostSetUp(array){
+  for(var i=0; i<array.length; i++){
+    array[i].dx = null;
+    array[i].dy = null;
+    array[i].freedom = false;
+  }
+  blinky.startpoint = {x: 18, y: 9};
+  blinky.boxHelp = false;
+  blinky.x = 13.5;
+  blinky.y = 11.5;
+  clyde.startpoint = {x: 18, y: 17};
+  clyde.boxHelp = true;
+  clyde.boxTop = false;
+  clyde.x = 11.5;
+  clyde.y = 14;
+  pinky.startpoint = {x: 9, y:9};
+  pinky.boxHelp = false;
+  pinky.x = 13.5;
+  pinky.y = 14;
+  inky.startpoint = {x: 9, y:17};
+  inky.boxHelp = true;
+  inky.boxTop = false;
+  inky.x = 15.5;
+  inky.y = 14;
+  displayGhosts(ghosts);
+}
+ghostSetUp(ghosts);
 
 function displayGhosts(array){
   for(var i=0; i<array.length; i++){
@@ -496,7 +545,7 @@ function displayGhosts(array){
     document.getElementById(array[i].name).style.x=array[i].x*25;
   }
 }
-displayGhosts(ghosts);
+// displayGhosts(ghosts);
 
 function findTrappedGhosts(array){
   for(var i=0; i<array.length; i++){
@@ -506,18 +555,25 @@ function findTrappedGhosts(array){
     if(array[i].freedom == true){
       clearInterval(ghostEscape);
       var huntingGhost = setInterval(array[i].hunt());
-      if(pacman.deathcount > 0){
-        document.getElementById('pacman').setAttribute("xlink:href", "sadpacman.gif");
-        deadPacman();
-
-      }
     }
   }
 }
-var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
-function deadPacman(){
-  clearInterval(ghostStatus);
+function setResetGhostStatus(){
+  if(pacman.alive == true){
+    var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
+  }
+  else {
+    console.log("shouldn't move");
+    // clearInterval(ghostStatus);
+    for(var i=0; i<ghosts.length; i++){
+      ghosts[i].dx = 0;
+      ghosts[i].dy = 0;
+    }
+    nextRound();
+  }
 }
+setResetGhostStatus();
+
 
 function displayPacman(){
   document.getElementById('pacman').setAttribute("xlink:href", "pacman.gif");
@@ -705,22 +761,23 @@ document.onkeydown = function(e){
 
      this.initialize();
  }
-
- for (var i=0; i<coinsMap.length; i++){
-   for(var j=0; j<coinsMap[i].length; j++){
-     var x = 25*j+10;
-     var y = 25*i+10;
-     if(coinsMap[i][j] == 1){
-       var r = 3;
-       var newcoin = new MakeCoin(x, y, r);
-     }
-     else if(coinsMap[i][j] == 2){
-       var r = 7;
-       var newcoin = new MakeCoin(x, y, r);
+ function displayAllCoins(){
+   for (var i=0; i<coinsMap.length; i++){
+     for(var j=0; j<coinsMap[i].length; j++){
+       var x = 25*j+10;
+       var y = 25*i+10;
+       if(coinsMap[i][j] == 1){
+         var r = 3;
+         var newcoin = new MakeCoin(x, y, r);
+       }
+       else if(coinsMap[i][j] == 2){
+         var r = 7;
+         var newcoin = new MakeCoin(x, y, r);
+       }
      }
    }
  }
-
+ displayAllCoins();
  function detectCoinCollection(){
    for(var i=0; i<coins.length; i++){
      if(Math.abs(coins[i].cx.animVal.value - player.style.x) <= 10 && Math.abs(coins[i].cy.animVal.value - player.style.y) <= 10){
