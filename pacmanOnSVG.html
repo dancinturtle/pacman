@@ -21,7 +21,7 @@
 <!--
    <rect class="obstacleRec" x="130" y="55" rx="10" ry="10"></rect>
    <polygon class="obstacleL" points="77,55 77,170 170,170 170,133 97,133 97,55"></polygon> -->
-   <image id="pacman" xlink:href="pacman.gif" height="20px" width="20px"></image>
+   <image id="pacman" xlink:href="" height="20px" width="20px"></image>
    <image id="blinky" xlink:href="blinky.gif" height="20px" width="20px" z-index="5"></image>
    <image id="clyde" xlink:href="clyde.gif" height="20px" width="20px"></image>
    <image id="inky" xlink:href="inky.gif" height="20px" width="20px"></image>
@@ -486,12 +486,23 @@ function findTrappedGhosts(array){
     if(array[i].freedom == true){
       clearInterval(ghostEscape);
       var huntingGhost = setInterval(array[i].hunt());
+      if(pacman.deathcount > 0){
+        document.getElementById('pacman').setAttribute("xlink:href", "sadpacman.gif");
+        deadPacman();
+
+      }
     }
   }
 }
 var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
+function deadPacman(){
+  clearInterval(ghostStatus);
+}
 
 function displayPacman(){
+  // element.setAttribute("style", "background-color: red;");
+  // xlink:href="pacman.gif"
+    document.getElementById('pacman').setAttribute("xlink:href", "pacman.gif");
    document.getElementById('pacman').style.y = pacman.y*25;
    document.getElementById('pacman').style.x = pacman.x*25;
  }
