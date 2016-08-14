@@ -47,23 +47,14 @@ function Ghost(name, x, y){
   this.dx= null,
   this.dy = null,
   this.float = function(){
-    if(pacman.x < this.x){
-      this.dx = 
+    if(pacman.y < this.y){
+      this.dy = -0.25;
     }
-    // var el = document.getElementById(html_id);
-    //
-    // //see if the circle is going outside the browser. if it is, reverse the velocity
-    // if( this.info.cx + this.info.radius > document.body.clientWidth || this.info.cx - this.info.radius  < 0)
-    // {
-    //   this.info.velocity.x = this.info.velocity.x * -1;
-    // }
-    // if( this.info.cy + this.info.radius > document.body.clientHeight || this.info.cy - this.info.radius < 0)
-    // {
-    //   this.info.velocity.y = this.info.velocity.y * -1;
-    // }
-
-    this.x += this.velocity.x;
-    this.dy += this.velocity.y;
+    if(pacman.y > this.y){
+      this.dy = 0.25;
+    }
+    this.x += this.dx;
+    this.y += this.dy;
     console.log("new coords", this.x, this.y);
     displayGhosts(ghosts);
     // el.setAttribute("x", this.x);
@@ -151,7 +142,7 @@ document.onkeydown = function(e){
    ghost.y += dy;
    displayGhosts(ghosts);
  }
- setInterval("floatingghost(blinky,0.25,0)", 100);
+ setInterval("blinky.float()", 100);
 
  function Borders(coorda, coordb, coordc, coordd){
    this.info = {coorda:coorda, coordb:coordb, coordc: coordc, coordd:coordd, style: "stroke: white; fill: none; stroke-width: 6;"};
