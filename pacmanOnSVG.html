@@ -7,13 +7,18 @@
 <body>
   <div id="stats">
     <div class="textblock">
-      <p id="lives">1 UP</p>
+      <p id="whoseTurn">1 UP</p>
       <p id="score">0</p>
       <p id="dead">still alive</p>
     </div>
     <div class="textblock">
       <p>HIGH SCORE</p>
       <p align="right">1500</p>
+    </div>
+    <div class="textblock">
+      <img id="one" src="madpacman.png" />
+      <img id="two" src="madpacman.png" />
+      <img id="three" src="madpacman.png" />
     </div>
   </div>
 
@@ -78,6 +83,7 @@ var pacman = {
    x: 13.5,
    y: 23,
    score: 0,
+   alive: true,
    deathcount: 0
  }
 function Ghost(name, x, y){
@@ -443,14 +449,28 @@ function Ghost(name, x, y){
     this.x += this.dx;
     this.y += this.dy;
     if(Math.abs(this.x - pacman.x)<1 && Math.abs(this.y - pacman.y)<1){
+      pacman.alive = false;
       pacman.deathcount++;
       document.getElementById('dead').innerHTML = pacman.deathcount;
-
+      //take away an extra guy
+      updateLives();
     }
     // console.log("new coords", this.x, this.y);
     displayGhosts(ghosts);
     // console.log("velocity", blinky.dx, blinky.dy);
   }
+}
+function updateLives() {
+  if(pacman.deathcount == 1){
+    document.getElementById('one').setAttribute("style", "display: none");
+  }
+  if(pacman.deathcount == 2){
+    document.getElementById('two').setAttribute("style", "display: none");
+  }
+  if(pacman.deathcount == 3){
+    document.getElementById('three').setAttribute("style", "display: none");
+  }
+
 }
 
 var blinky = new Ghost("blinky", 13.5, 11.5);
@@ -500,48 +520,44 @@ function deadPacman(){
 }
 
 function displayPacman(){
-  // element.setAttribute("style", "background-color: red;");
-  // xlink:href="pacman.gif"
-    document.getElementById('pacman').setAttribute("xlink:href", "pacman.gif");
-   document.getElementById('pacman').style.y = pacman.y*25;
-   document.getElementById('pacman').style.x = pacman.x*25;
+  document.getElementById('pacman').setAttribute("xlink:href", "pacman.gif");
+  document.getElementById('pacman').style.y = pacman.y*25;
+  document.getElementById('pacman').style.x = pacman.x*25;
  }
 
 displayPacman();
 
+
 document.onkeydown = function(e){
-  //  console.log(e.keyCode);
    //pacmanright
-   if(e.keyCode == 39 && coinsMap[pacman.y][pacman.x+1]==3){
+   if(e.keyCode == 39 && coinsMap[pacman.y][pacman.x+1]==3 && pacman.alive == true){
      pacman.x = 1;
    }
-   else if(e.keyCode == 39 && coinsMap[pacman.y][pacman.x+1]!=9){
+   else if(e.keyCode == 39 && coinsMap[pacman.y][pacman.x+1]!=9 && pacman.alive == true){
      pacman.x = Math.floor(pacman.x) + 1;
    }
    //pacmanleft
-   else if(e.keyCode == 37 && coinsMap[pacman.y][pacman.x-1]==3){
+   else if(e.keyCode == 37 && coinsMap[pacman.y][pacman.x-1]==3 && pacman.alive == true){
      pacman.x = 26;
      pacman.y=15;
    }
-   else if (e.keyCode == 37 && coinsMap[pacman.y][pacman.x-1]!=9){
+   else if (e.keyCode == 37 && coinsMap[pacman.y][pacman.x-1]!=9 && pacman.alive == true){
      pacman.x = Math.ceil(pacman.x) - 1;
     //  pacman.x--;
    }
    //pacmanup
-   else if (e.keyCode == 38 && coinsMap[pacman.y-1][Math.floor(pacman.x)]!=9){
-
+   else if (e.keyCode == 38 && coinsMap[pacman.y-1][Math.floor(pacman.x)]!=9 && pacman.alive == true){
      pacman.y--;
    }
    //pacmandown
-   else if (e.keyCode == 40 && coinsMap[pacman.y+1][Math.floor(pacman.x)]!=9 && coinsMap[pacman.y+1][pacman.x]!=4){
-
+   else if (e.keyCode == 40 && coinsMap[pacman.y+1][Math.floor(pacman.x)]!=9 && coinsMap[pacman.y+1][pacman.x]!=4 && pacman.alive == true){
      pacman.y++;
    }
-  //  console.log("Pacman", pacman);
-   displayPacman();
-   detectCoinCollection();
-
- }
+   if(pacman.alive == true){
+     displayPacman();
+     detectCoinCollection();
+   }
+}
 
  function Borders(coorda, coordb, coordc, coordd){
    this.info = {coorda:coorda, coordb:coordb, coordc: coordc, coordd:coordd, style: "stroke: white; fill: none; stroke-width: 6;"};
