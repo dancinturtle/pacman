@@ -83,41 +83,100 @@ function Ghost(name, x, y){
   this.x = x,
   this.y = y,
   this.dx= null,
-  this.dy = -0.25,
+  this.dy = null,
   this.jiggleVertical = 0,
   this.jiggleHorizontal = 0,
   this.freedom = false,
   //this.startpoint = {x: something, y: something}
   this.escape = function(){
-    console.log(this.name, "escaping", this.x, this.y, "starting", this.startpoint);
-    //if you want to go right and are able to
-    if(this.x < this.startpoint.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1] != 9){
-      this.dy = 0;
-      this.dx = 0.25;
+    //this code will work as long as startpoint is above the ghost box
+    if(this.boxHelp == false){
+      //if you want to go right and are able to
+      if(this.x < this.startpoint.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1] != 9){
+        this.dy = 0;
+        this.dx = 0.25;
+      }
+      //but if right is blocked
+      else if(this.x < this.startpoint.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1] == 9){
+        this.dx = 0;
+      }
+      //if you want to go left and are able to
+      if(this.x > this.startpoint.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1] != 9){
+        this.dy = 0;
+        this.dx = -0.25;
+      }
+      //but if left is blocked
+      else if(this.x > this.startpoint.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1] == 9){
+        this.dx = 0;
+      }
+      //if you want to go up and are able to
+      if(this.y > this.startpoint.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)] != 9){
+        this.x = Math.round(this.x);
+        this.dx = 0;
+        this.dy = -0.25;
+      }
+      //but if up is blocked
+      else if(this.y > this.startpoint.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)] == 9){
+        this.dy = 0;
+      }
+      //if you want to go down and are able to
+      if(this.y < this.startpoint.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)] != 9){
+        this.x = Math.round(this.x);
+        this.dx = 0;
+        this.dy = 0.25;
+      }
+      //but if down is blocked
+      else if(this.y < this.startpoint.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)] == 9){
+        this.dy=0;
+      }
+      this.x += this.dx;
+      this.y += this.dy;
+      displayGhosts(ghosts);
+      if(this.y == this.startpoint.y && this.x == this.startpoint.x){
+        this.freedom = true;
+        // console.log("freedom", this.x, this.y);
+        // displayGhosts(ghosts);
+        // huntingGhosts(this);
+      }
     }
-    //if you want to go left and are able to
-    else if(this.x > this.startpoint.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1] != 9){
-      this.dy = 0;
-      this.dx = -0.25;
-    }
-    //if you want to go up and are able to
-    else if(this.y > this.startpoint.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)] != 9){
-      this.dx = 0;
-      this.dy = -0.25;
-    }
-    //if you want to go down and are able to
-    else if(this.y < this.startpoint.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)] != 9){
-      this.dx = 0;
-      this.dy = 0.25;
-    }
-    this.x += this.dx;
-    this.y += this.dy;
-    displayGhosts(ghosts);
-    if(this.y == this.startpoint.y && this.x == this.startpoint.x){
-      this.freedom = true;
-      console.log("freedom", this.x, this.y);
-      // displayGhosts(ghosts);
-      huntingGhosts(this);
+    else {
+      if(this.boxTop == false){
+        if(this.x < 13){
+          this.dy = 0;
+          this.dx = 0.25;
+        }
+        else if (this.x > 13){
+          this.dx = -0.25;
+          this.dy = 0;
+        }
+        else if (this.x == 13 && this.y > 11){
+          this.dx = 0;
+          this.dy = -0.25;
+        }
+        else if (this.x == 13 && this.y == 11){
+          this.dy = 0;
+          this.boxTop = true;
+        }
+      }
+      if(this.boxTop == true){
+        if(this.name == "clyde"){
+          this.dx = 0.25;
+        }
+        if(this.name =="inky"){
+          this.dx = -0.25;
+        }
+        if(this.x == this.startpoint.x){
+          this.dx = 0;
+          this.dy = 0.25;
+          this.boxTop = false;
+          this.boxHelp = false;
+        }
+
+      }
+      this.x += this.dx;
+      this.y += this.dy;
+      displayGhosts(ghosts);
+
     }
   }
   this.hunt = function(){
@@ -142,7 +201,7 @@ function Ghost(name, x, y){
           this.dx = 0.25;
         }
       }
-      console.log("stop the jiggling!");
+      // console.log("stop the jiggling!");
     }
     if(this.jiggleHorizontal > 4){
       //stop moving horizontally
@@ -165,7 +224,7 @@ function Ghost(name, x, y){
           this.dy = 0.25;
         }
       }
-      console.log("stop the jiggling!");
+      // console.log("stop the jiggling!");
     }
     // traveling up, but pacman is down, and there's no barrier below
     if(this.dy < 0 && pacman.y > this.y && coinsMap[Math.round(this.y)+1][Math.round(this.x)]!=9){
@@ -251,7 +310,7 @@ function Ghost(name, x, y){
           }
         }
       }
-    console.log("fifth");
+    // console.log("fifth");
     }
     //traveling down and bump into a barrier
     if(this.dy>0 && coinsMap[Math.ceil(this.y)+1][Math.round(this.x)]==9){
@@ -293,7 +352,7 @@ function Ghost(name, x, y){
           }
         }
       }
-    console.log("sixth");
+    // console.log("sixth");
     }
     //if traveling right and bump into a barrier
     if(this.dx>0 && coinsMap[Math.round(this.y)][Math.ceil(this.x+1)]==9){
@@ -335,7 +394,7 @@ function Ghost(name, x, y){
           }
         }
       }
-    console.log("seventh");
+    // console.log("seventh");
     }
     //if traveling left and bump into a barrier
     if(this.dx<0 && coinsMap[Math.round(this.y)][Math.floor(this.x-1)]==9){
@@ -377,24 +436,30 @@ function Ghost(name, x, y){
           }
         }
       }
-    console.log("eighth");
+    // console.log("eighth");
     }
     this.x += this.dx;
     this.y += this.dy;
-    console.log("new coords", this.x, this.y);
+    // console.log("new coords", this.x, this.y);
     displayGhosts(ghosts);
-    console.log("velocity", blinky.dx, blinky.dy);
+    // console.log("velocity", blinky.dx, blinky.dy);
   }
 }
 
 var blinky = new Ghost("blinky", 13.5, 11.5);
 blinky.startpoint = {x: 18, y: 9};
+blinky.boxHelp = false;
 var clyde = new Ghost("clyde", 11.5, 14);
 clyde.startpoint = {x: 18, y: 17};
+clyde.boxHelp = true;
+clyde.boxTop = false;
 var pinky = new Ghost("pinky", 13.5, 14);
 pinky.startpoint = {x: 9, y:9};
+pinky.boxHelp = false;
 var inky = new Ghost("inky", 15.5, 14);
 inky.startpoint = {x: 9, y:17};
+inky.boxHelp = true;
+inky.boxTop = false;
 var ghosts= [blinky, clyde, pinky, inky];
 
 function displayGhosts(array){
@@ -411,40 +476,29 @@ function findTrappedGhosts(array){
     if(array[i].freedom == false){
       var ghostEscape = setInterval(array[i].escape(), 100);
     }
-    // //if the ghosts are in the ghost box, freedom = false, start the escape()
-    // if(array[i].x < 17 && array[i].x > 10 && array[i].y < 16 && array[i].y > 12){
-    //   if(array[i].freedom == true){
-    //     array[i].freedom = false;
-    //   }
-    //}
+    if(array[i].freedom == true){
+      clearInterval(ghostEscape);
+      var huntingGhost = setInterval(array[i].hunt());
+    }
   }
-  console.log("trapped ghosts", blinky.freedom, clyde.freedom, pinky.freedom, inky.freedom);
 }
+var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
 
 // setInterval("findTrappedGhosts(ghosts)", 100);
-function huntingGhosts(ghost){
-      var huntingGhost = setInterval(ghost.hunt());
-}
-
-  // var clydeEscape = setInterval("clyde.escape()", 100);
-var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
-  // if(clyde.freedom == true){
-  //   console.log("clyde*************************************", clyde.freedom);
-  //   clearInterval(clydeEscape);
-  //
-  // }
-
+// function huntingGhosts(ghost){
+//       var huntingGhost = setInterval(ghost.hunt());
+// }
 
 function displayPacman(){
    document.getElementById('pacman').style.y = pacman.y*25;
    document.getElementById('pacman').style.x = pacman.x*25;
-   console.log("player", player.style.x, player.style.y);
+  //  console.log("player", player.style.x, player.style.y);
  }
 
 displayPacman();
 
 document.onkeydown = function(e){
-   console.log(e.keyCode);
+  //  console.log(e.keyCode);
    //pacmanright
    if(e.keyCode == 39 && coinsMap[pacman.y][pacman.x+1]==3){
      pacman.x = 1;
@@ -471,7 +525,7 @@ document.onkeydown = function(e){
 
      pacman.y++;
    }
-   console.log("Pacman", pacman);
+  //  console.log("Pacman", pacman);
    displayPacman();
    detectCoinCollection();
 
@@ -540,7 +594,7 @@ document.onkeydown = function(e){
     document.getElementById('svg').appendChild(obstacleL);
   }
   var makeSVG = function(tag, attrs) {
-        console.log("attrs", attrs);
+        // console.log("attrs", attrs);
         var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
         for (var k in attrs)
         {
@@ -562,7 +616,7 @@ document.onkeydown = function(e){
     document.getElementById('svg').appendChild(obstacleL);
   }
   var makeSVG = function(tag, attrs) {
-        console.log("attrs", attrs);
+        // console.log("attrs", attrs);
         var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
         for (var k in attrs)
         {
