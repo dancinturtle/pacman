@@ -9,6 +9,7 @@
     <div class="textblock">
       <p id="lives">1 UP</p>
       <p id="score">0</p>
+      <p id="dead">still alive</p>
     </div>
     <div class="textblock">
       <p>HIGH SCORE</p>
@@ -76,7 +77,8 @@ var player = document.getElementById('pacman');
 var pacman = {
    x: 13.5,
    y: 23,
-   score: 0
+   score: 0,
+   deathcount: 0
  }
 function Ghost(name, x, y){
   this.name = name,
@@ -440,6 +442,11 @@ function Ghost(name, x, y){
     }
     this.x += this.dx;
     this.y += this.dy;
+    if(Math.abs(this.x - pacman.x)<1 && Math.abs(this.y - pacman.y)<1){
+      pacman.deathcount++;
+      document.getElementById('dead').innerHTML = pacman.deathcount;
+
+    }
     // console.log("new coords", this.x, this.y);
     displayGhosts(ghosts);
     // console.log("velocity", blinky.dx, blinky.dy);
@@ -484,15 +491,9 @@ function findTrappedGhosts(array){
 }
 var ghostStatus = setInterval("findTrappedGhosts(ghosts)", 100);
 
-// setInterval("findTrappedGhosts(ghosts)", 100);
-// function huntingGhosts(ghost){
-//       var huntingGhost = setInterval(ghost.hunt());
-// }
-
 function displayPacman(){
    document.getElementById('pacman').style.y = pacman.y*25;
    document.getElementById('pacman').style.x = pacman.x*25;
-  //  console.log("player", player.style.x, player.style.y);
  }
 
 displayPacman();
