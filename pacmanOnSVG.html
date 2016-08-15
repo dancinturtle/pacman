@@ -455,18 +455,10 @@ function findTrappedGhosts(array){
       var ghostEscape = setInterval(array[i].escape(), 100);
     }
     if(array[i].freedom == true && array[i].flee == false){
-<<<<<<< HEAD
-      clearInterval(ghostEscape);
-      var huntingGhost = setInterval(array[i].hunt(), 100);
-    }
-    if(array[i].freedom == true && array[i].flee == true){
-      clearInterval(huntingGhost);
-      var fleeingGhost = setInterval(array[i].runaway(), 100);
-=======
       clearInterval(fleeingGhost);
       clearInterval(ghostEscape);
       var huntingGhost = setInterval(array[i].hunt(), 100);
->>>>>>> move
+
     }
   }
 }
