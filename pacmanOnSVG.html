@@ -94,7 +94,8 @@ var pacman = {
    score: 0,
    alive: true,
    deathcount: 0,
-   cherry: false
+   cherry: false,
+   powerPellets: [false, false, false, false]
  }
 function Ghost(name, x, y){
   this.name = name,
@@ -623,6 +624,7 @@ document.onkeydown = function(e){
    if(pacman.alive == true){
      displayPacman();
      detectCoinCollection();
+     detectPowerPellet();
    }
    if(pacman.alive == true && pacman.cherry == true){
      detectCherryCollection();
@@ -805,6 +807,44 @@ document.onkeydown = function(e){
        }
      }
    }
+ }
+ function powerGone(){
+   document.getElementById('whoseTurn').innerHTML = "1UP";
+   document.getElementById('blinky').setAttribute("xlink:href", "blinky.gif");
+   document.getElementById('pinky').setAttribute("xlink:href", "pinky.gif");
+   document.getElementById('inky').setAttribute("xlink:href", "inky.gif");
+   document.getElementById('clyde').setAttribute("xlink:href", "clyde.gif");
+ }
+ function detectPowerPellet(){
+   if(pacman.x==1 && pacman.y==3 && pacman.powerPellets[0]==false){
+     pacman.powerPellets[0]=true;
+     for(var i=0; i<ghosts.length; i++){
+       document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+     }
+     setTimeout(powerGone, 8000);
+   }
+   if(pacman.x==26 && pacman.y==3 && pacman.powerPellets[1]==false){
+     pacman.powerPellets[1]=true;
+     for(var i=0; i<ghosts.length; i++){
+       document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+     }
+     setTimeout(powerGone, 8000);
+   }
+   if(pacman.x==1 && pacman.y==27 && pacman.powerPellets[2]==false){
+     pacman.powerPellets[2]=true;
+     for(var i=0; i<ghosts.length; i++){
+       document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+     }
+     setTimeout(powerGone, 8000);
+   }
+   if(pacman.x==26 && pacman.y==27 && pacman.powerPellets[3]==false){
+     pacman.powerPellets[3]=true;
+     for(var i=0; i<ghosts.length; i++){
+       document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+     }
+     setTimeout(powerGone, 8000);
+   }
+
  }
 
  function detectCherryCollection(){
