@@ -99,6 +99,7 @@ var pacman = {
  }
 function Ghost(name, x, y){
   this.name = name,
+  this.alive = true,
   this.x = x,
   this.y = y,
   this.dx= null,
@@ -107,142 +108,9 @@ function Ghost(name, x, y){
   this.jiggleVertical = 0,
   this.jiggleHorizontal = 0,
   this.flee = false,
-  this.safespace = null,
-  this.pacmantarget = {x:14, y:14},
+  // this.safespace = null,
+  this.destination = {x:14, y:14},
   this.freedom = false,
-  this.runaway = function(){
-    if(this.safespace.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9 && this.badDirection !=3){
-      if(this.badDirection == 12 || this.badDirection == 6){
-        this.badDirection = null;
-      }
-      this.dx = 0.25;
-      this.dy=0;
-    }
-    //target to the right, but a barrier
-    else if(this.safespace.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
-      this.dx = 0;
-      //target is up, no barrier, up is not banned
-      if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection!=12){
-        this.dy = -0.25;
-      }
-      //target is up, no barrier, but we've banned up
-      else if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection==12){
-        this.dy = 0.25;
-      }
-      //target is up, but there's a barrier, will want to explore down for a while
-      else if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9 && this.badDirection != 6){
-        this.badDirection = 12;
-        this.dy = 0.25;
-      }
-      //target is down, no barrier, down is not banned
-      else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection!=6){
-        this.dy = 0.25;
-      }
-      //target is down, no barrier, but we've banned down
-      else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection==6){
-        this.dy = -0.25;
-      }
-      //target is down, but there's a barrier, will want to explore up for a while
-      else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9 && this.badDirection != 12){
-        this.badDirection = 6;
-        this.dy = -0.25;
-      }
-    }
-    //target to the left, no barrier
-    else if(this.safespace.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9 && this.badDirection !=9){
-      if(this.badDirection == 12 || this.badDirection == 6){
-        this.badDirection = null;
-      }
-      this.dx = -0.25;
-      this.dy = 0;
-    }
-    //target to the left, but a barrier
-    else if(this.safespace.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
-      this.dx = 0;
-      //target is up, no barrier, up is not banned
-      if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection!=12){
-        this.dy = -0.25;
-      }
-      //target is up, but there's a barrier, will want to explore down for a while
-      else if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9 && this.badDirection != 6){
-        this.badDirection = 12;
-        this.dy = 0.25;
-      }
-      //target is down, no barrier, down is not banned
-      else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection!=6){
-        this.dy = 0.25;
-      }
-      //target is down, no barrier, but we've banned down
-      else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection==6){
-        this.dy = -0.25;
-      }
-      //target is down, but there's a barrier, will want to explore up for a while
-      else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9 && this.badDirection != 12){
-        this.badDirection = 6;
-        this.dy = -0.25;
-      }
-    }
-    else if(this.safespace.x == this.x && this.safespace.y == this.y){
-      this.dx = 0;
-      this.dy = 0;
-
-    }
-    //you want to go left and you can
-    // if(this.safespace.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
-    //
-    //   this.dy = 0;
-    //   this.dx = -0.25;
-    // }
-    // //you want to go left and you can't
-    // else if(this.safespace.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
-    //   this.dx = 0;
-    //   //want to go up and you can
-    //   if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
-    //     this.dy = -0.25;
-    //   }
-    //   //want to go down and you can
-    //   else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
-    //     this.dy = 0.25;
-    //   }
-    //   //want to go up and you can't
-    //   else if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9){
-    //     this.dy = 0.25;
-    //   }
-    //   //want to go down and you can't
-    //   else if (this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
-    //     this.dy = -0.25;
-    //   }
-    // }
-    // //want to go right and you can
-    // else if(this.safespace.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
-    //   this.dy = 0;
-    //   this.dx = 0.25;
-    // }
-    // //want to go right and you can't
-    // else if(this.safespace.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
-    //   this.dx = 0;
-    //   //want to go up and you can
-    //   if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
-    //     this.dy = -0.25;
-    //   }
-    //   //want to go down and you can
-    //   else if(this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
-    //     this.dy = 0.25;
-    //   }
-    //   //want to go up and you can't
-    //   else if(this.safespace.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9){
-    //     this.dy = 0.25;
-    //   }
-    //   //want to go down and you can't
-    //   else if (this.safespace.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
-    //     this.dy = -0.25;
-    //   }
-    // }
-    //
-    this.x += this.dx;
-    this.y += this.dy;
-    displayGhosts(ghosts);
-  }
   this.escape = function(){
     //this code will work as long as startpoint is above the ghost box
     if(this.boxHelp == false){
@@ -289,9 +157,6 @@ function Ghost(name, x, y){
       displayGhosts(ghosts);
       if(this.y == this.startpoint.y && this.x == this.startpoint.x){
         this.freedom = true;
-        // console.log("freedom", this.x, this.y);
-        // displayGhosts(ghosts);
-        // huntingGhosts(this);
       }
     }
     else {
@@ -333,10 +198,10 @@ function Ghost(name, x, y){
       displayGhosts(ghosts);
 
     }
-  }
+  },
   this.hunt = function(){
     //target to the right, no barrier
-    if(this.pacmantarget.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9 && this.badDirection !=3){
+    if(this.destination.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9 && this.badDirection !=3){
       if(this.badDirection == 12 || this.badDirection == 6){
         this.badDirection = null;
       }
@@ -344,37 +209,37 @@ function Ghost(name, x, y){
       this.dy=0;
     }
     //target to the right, but a barrier
-    else if(this.pacmantarget.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
+    else if(this.destination.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
       this.dx = 0;
       //target is up, no barrier, up is not banned
-      if(this.pacmantarget.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection!=12){
+      if(this.destination.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection!=12){
         this.dy = -0.25;
       }
       //target is up, no barrier, but we've banned up
-      else if(this.pacmantarget.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection==12){
+      else if(this.destination.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection==12){
         this.dy = 0.25;
       }
       //target is up, but there's a barrier, will want to explore down for a while
-      else if(this.pacmantarget.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9 && this.badDirection != 6){
+      else if(this.destination.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9 && this.badDirection != 6){
         this.badDirection = 12;
         this.dy = 0.25;
       }
       //target is down, no barrier, down is not banned
-      else if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection!=6){
+      else if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection!=6){
         this.dy = 0.25;
       }
       //target is down, no barrier, but we've banned down
-      else if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection==6){
+      else if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection==6){
         this.dy = -0.25;
       }
       //target is down, but there's a barrier, will want to explore up for a while
-      else if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9 && this.badDirection != 12){
+      else if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9 && this.badDirection != 12){
         this.badDirection = 6;
         this.dy = -0.25;
       }
     }
     //target to the left, no barrier
-    else if(this.pacmantarget.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9 && this.badDirection !=9){
+    else if(this.destination.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9 && this.badDirection !=9){
       if(this.badDirection == 12 || this.badDirection == 6){
         this.badDirection = null;
       }
@@ -382,40 +247,40 @@ function Ghost(name, x, y){
       this.dy = 0;
     }
     //target to the left, but a barrier
-    else if(this.pacmantarget.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
+    else if(this.destination.x < this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
       this.dx = 0;
       //target is up, no barrier, up is not banned
-      if(this.pacmantarget.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection!=12){
+      if(this.destination.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && this.badDirection!=12){
         this.dy = -0.25;
       }
       //target is up, but there's a barrier, will want to explore down for a while
-      else if(this.pacmantarget.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9 && this.badDirection != 6){
+      else if(this.destination.y < this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9 && this.badDirection != 6){
         this.badDirection = 12;
         this.dy = 0.25;
       }
       //target is down, no barrier, down is not banned
-      else if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection!=6){
+      else if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection!=6){
         this.dy = 0.25;
       }
       //target is down, no barrier, but we've banned down
-      else if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection==6){
+      else if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && this.badDirection==6){
         this.dy = -0.25;
       }
       //target is down, but there's a barrier, will want to explore up for a while
-      else if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9 && this.badDirection != 12){
+      else if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9 && this.badDirection != 12){
         this.badDirection = 6;
         this.dy = -0.25;
       }
     }
     //NEW STUFF
-    else if(this.pacmantarget.x == this.x && this.pacmantarget.y != this.y){
+    else if(this.destination.x == this.x && this.destination.y != this.y){
       //if there is no barrier
-      if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
+      if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
         this.dx = 0;
         this.dy = 0.25;
       }
       //if there is a barrier
-      if(this.pacmantarget.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
+      if(this.destination.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
         this.dy = 0;
         if(coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
           this.badDirection = 9;
@@ -427,7 +292,8 @@ function Ghost(name, x, y){
       }
     }
     //END NEW STUFF
-    else if(this.pacmantarget.x == this.x && this.pacmantarget.y == this.y){
+    else if(this.destination.x == this.x && this.destination.y == this.y){
+      document.getElementById('whoseTurn').innerHTML = "found my spot";
       this.dx = 0;
       this.dy = 0;
 
@@ -436,16 +302,21 @@ function Ghost(name, x, y){
     this.x += this.dx;
     this.y += this.dy;
     if(Math.abs(this.x - pacman.x)<1 && Math.abs(this.y - pacman.y)<1){
-
-      if(pacman.alive == true){
-        pacman.alive = false;
-        pacman.deathcount++;
+      if(this.flee == false){
+        document.getElementById('whoseTurn').innerHTML = "pacman's dead";
+        if(pacman.alive == true){
+          pacman.alive = false;
+          this.dx = 0;
+          this.dy = 0;
+          pacman.deathcount++;
+          updateLives();
+          setResetGhostStatus();
+          document.getElementById('pacman').setAttribute("xlink:href", "sadpacman.gif");
+        }
       }
-      setResetGhostStatus();
-      document.getElementById('pacman').setAttribute("xlink:href", "sadpacman.gif");
-
-      updateLives();
-
+      else {
+          document.getElementById('whoseTurn').innerHTML = "ghost is dead";
+      }
     }
 
     displayGhosts(ghosts);
@@ -465,26 +336,26 @@ function nextRound(){
 function setPacmanTarget(){
   var pacx = pacman.x;
   var pacy = pacman.y;
-  clyde.pacmantarget.x = pacx;
-  clyde.pacmantarget.y = pacy;
-  blinky.pacmantarget.x = pacx-2;
-  blinky.pacmantarget.y = pacy+2;
-  inky.pacmantarget.x = pacx + 3;
-  inky.pacmantarget.y = pacy - 3;
-  pinky.pacmantarget.x = pacx + 3;
-  pinky.pacmantarget.y = pacy -5;
+  clyde.destination.x = pacx;
+  clyde.destination.y = pacy;
+  blinky.destination.x = pacx-2;
+  blinky.destination.y = pacy+2;
+  inky.destination.x = pacx + 3;
+  inky.destination.y = pacy - 3;
+  pinky.destination.x = pacx + 3;
+  pinky.destination.y = pacy -5;
   for(var i=0; i<4; i++){
-    if(ghosts[i].pacmantarget.x > 27){
-      ghosts[i].pacmantarget.x = 27;
+    if(ghosts[i].destination.x > 26){
+      ghosts[i].destination.x = 26;
     }
-    if(ghosts[i].pacmantarget.x < 1){
-      ghosts[i].pacmantarget.x = 1;
+    if(ghosts[i].destination.x < 1){
+      ghosts[i].destination.x = 1;
     }
-    if(ghosts[i].pacmantarget.y > 29){
-      ghosts[i].pacmantarget.y = 29;
+    if(ghosts[i].destination.y > 29){
+      ghosts[i].destination.y = 29;
     }
-    if(ghosts[i].pacmantarget.y < 1){
-      ghosts[i].pacmantarget.y = 1;
+    if(ghosts[i].destination.y < 1){
+      ghosts[i].destination.y = 1;
     }
   }
 }
@@ -557,42 +428,14 @@ function displayGhosts(array){
 
     document.getElementById(array[i].name).style.y=array[i].y*25;
     document.getElementById(array[i].name).style.x=array[i].x*25;
-    // if(coinsMap[Math.round(array[i].y)][Math.round(array[i].x)] == 9){
-    //   if(coinsMap[Math.floor(array[i].y)][Math.round(array[i].x)]!=9){
-    //     array[i].y=Math.floor(array[i].y);
-    //     array[i].x = Math.round(array[i].x);
-    //   }
-    //   else if(coinsMap[Math.ceil(array[i].y)][Math.round(array[i].x)]!=9){
-    //     array[i].y = Math.ceil(array[i].y);
-    //     array[i].x = Math.round(array[i].x);
-    //   }
-    //   else if(coinsMap[Math.round(array[i].y)][Math.floor(array[i].x)]!=9){
-    //     array[i].y = Math.round(array[i].y);
-    //     array[i].x = Math.floor(array[i].x);
-    //   }
-    //   else if(coinsMap[Math.round(array[i].y)][Math.ceil(array[i].x)]!=9){
-    //     array[i].y = Math.round(array[i].y);
-    //     array[i].x = Math.ceil(array[i].x);
-    //   }
-    //   else if(coinsMap[Math.floor(array[i].y)][Math.floor(array[i].x)]!=9){
-    //     array[i].y = Math.floor(array[i].y);
-    //     array[i].x = Math.floor(array[i].x);
-    //   }
-    //   else if(coinsMap[Math.ceil(array[i].y)][Math.ceil(array[i].x)]!=9){
-    //     array[i].y = Math.ceil(array[i].y);
-    //     array[i].x = Math.ceil(array[i].x);
-    //   }
-    //
-    //
-    // }
   }
 }
-// displayGhosts(ghosts);
+
 
 function findTrappedGhosts(array){
   for(var i=0; i<array.length; i++){
     if(array[i].flee == true){
-      var fleeingGhost = setInterval(array[i].runaway(), 100);
+      var fleeingGhost = setInterval(array[i].hunt(), 100);
     }
     if(array[i].freedom == false && array[i].flee == false){
       clearInterval(fleeingGhost);
@@ -660,6 +503,9 @@ document.onkeydown = function(e){
      displayPacman();
      detectCoinCollection();
      detectPowerPellet();
+
+   }
+   if(pacman.alive == true && clyde.flee == false){
      setPacmanTarget();
    }
    if(pacman.alive == true && pacman.cherry == true){
@@ -850,19 +696,21 @@ document.onkeydown = function(e){
    document.getElementById('pinky').setAttribute("xlink:href", "pinky.gif");
    document.getElementById('inky').setAttribute("xlink:href", "inky.gif");
    document.getElementById('clyde').setAttribute("xlink:href", "clyde.gif");
+   setPacmanTarget();
    for(var i=0; i<ghosts.length; i++){
      ghosts[i].flee = false;
-     ghosts[i].safespace = null;
+    //  ghosts[i].safespace = null;
      ghosts[i].badDirection = null;
    }
  }
  function detectPowerPellet(){
+   document.getElementById('whoseTurn').innerHTML=blinky.destination.x;
    if(pacman.x==1 && pacman.y==3 && pacman.powerPellets[0]==false){
      pacman.powerPellets[0]=true;
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
        ghosts[i].flee = true;
-       ghosts[i].safespace = {x: 26, y: 29};
+       ghosts[i].destination = {x: 26, y: 29};
        ghosts[i].badDirection = null;
      }
      setTimeout(powerGone, 8000);
@@ -872,8 +720,9 @@ document.onkeydown = function(e){
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
        ghosts[i].flee = true;
-       ghosts[i].safespace = {x: 1, y: 29};
+       ghosts[i].destination = {x: 1, y: 29};
        ghosts[i].badDirection = null;
+
      }
      setTimeout(powerGone, 8000);
    }
@@ -882,8 +731,9 @@ document.onkeydown = function(e){
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
        ghosts[i].flee = true;
-       ghosts[i].safespace = {x: 26, y: 1};
+       ghosts[i].destination = {x: 26, y: 1};
        ghosts[i].badDirection = null;
+
      }
      setTimeout(powerGone, 8000);
    }
@@ -892,8 +742,9 @@ document.onkeydown = function(e){
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
        ghosts[i].flee = true;
-       ghosts[i].safespace = {x: 1, y: 1};
+       ghosts[i].destination = {x: 1, y: 1};
        ghosts[i].badDirection = null;
+
      }
      setTimeout(powerGone, 8000);
    }
