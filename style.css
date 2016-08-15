@@ -22,3 +22,6 @@ body {
 	display: inline-block;
 	margin-right: 100px;
 }
+#cherry {
+	display: none;
+}

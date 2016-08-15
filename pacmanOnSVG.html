@@ -26,10 +26,11 @@
    <rect class="obstacleRec" x="130" y="55" rx="10" ry="10"></rect>
    <polygon class="obstacleL" points="77,55 77,170 170,170 170,133 97,133 97,55"></polygon> -->
    <image id="pacman" xlink:href="" height="20px" width="20px"></image>
-   <image id="blinky" xlink:href="blinky.gif" height="20px" width="20px" z-index="5"></image>
+   <image id="blinky" xlink:href="blinky.gif" height="20px" width="20px"></image>
    <image id="clyde" xlink:href="clyde.gif" height="20px" width="20px"></image>
    <image id="inky" xlink:href="inky.gif" height="20px" width="20px"></image>
    <image id="pinky" xlink:href="pinky.gif" height="20px" width="20px"></image>
+   <image id="cherry" xlink:href="cherry.png" x="335" y="420" height="25px" width="25px"></image>
 
 
  </svg>
@@ -78,12 +79,22 @@ var coinsMap = [
 ]
 var player = document.getElementById('pacman');
 
+function displayCherry(){
+  document.getElementById('cherry').setAttribute("style", "display: block");
+  pacman.cherry = true;
+}
+function hideCherry(){
+  document.getElementById('cherry').setAttribute("style", "display: none");
+  pacman.cherry = false;
+}
+
 var pacman = {
    x: 13.5,
    y: 23,
    score: 0,
    alive: true,
-   deathcount: 0
+   deathcount: 0,
+   cherry: false
  }
 function Ghost(name, x, y){
   this.name = name,
@@ -613,6 +624,9 @@ document.onkeydown = function(e){
      displayPacman();
      detectCoinCollection();
    }
+   if(pacman.alive == true && pacman.cherry == true){
+     detectCherryCollection();
+   }
 }
 
  function Borders(coorda, coordb, coordc, coordd){
@@ -635,8 +649,8 @@ document.onkeydown = function(e){
 
      this.initialize();
  }
- var outerBorderTop = new Borders("0, 350", "0,0", "700, 0", "700, 360");
- var outerBorderBottom = new Borders("0, 400", "0, 765", "700, 765", "700, 400");
+ var outerBorderTop = new Borders("9, 350", "9,9", "685, 9", "685, 360");
+ var outerBorderBottom = new Borders("9, 400", "9, 760", "685, 760", "685, 400");
  var ghostBoxLeft = new Borders("320, 320", "270, 320", "270, 400", "350, 400");
  var ghostBoxRight = new Borders("350, 400", "430, 400", "430, 320", "380, 320");
  // var ghostBox = new Borders(500, 500, 300, 300);
@@ -785,7 +799,20 @@ document.onkeydown = function(e){
        pacman.score += 10;
        document.getElementById('score').innerHTML = pacman.score;
        removeAtIndex(coins, i);
+       if(pacman.score == 500 || pacman.score == 1500){
+         displayCherry();
+         setTimeout(hideCherry, 15000);
+       }
      }
+   }
+ }
+
+ function detectCherryCollection(){
+   if((pacman.x==13 || pacman.x==14) && pacman.y==17){
+    document.getElementById('cherry').setAttribute('style', 'none');
+    pacman.cherry = false;
+    pacman.score += 500;
+    document.getElementById('score').innerHTML = pacman.score;
    }
  }
 
