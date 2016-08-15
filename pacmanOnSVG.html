@@ -106,45 +106,198 @@ function Ghost(name, x, y){
   this.jiggleVertical = 0,
   this.jiggleHorizontal = 0,
   this.freedom = false,
-  //this.startpoint = {x: something, y: something}
+  this.flee = false,
+  this.runaway = function(){
+    this.dx = 0;
+    this.dy=0.1;
+    this.x += this.dx;
+    this.y += this.dy;
+    displayGhosts(ghosts);
+  }
+  // this.runaway = function(){
+  //   // traveling up, but pacman is up, and there's no barrier down
+  //   if(this.dy < 0 && pacman.y < this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
+  //     this.dx = 0;
+  //     this.dy = 0.25;
+  //   }
+  //   //traveling down, but pacman is down, and there's no barrier above
+  //   if(this.dy > 0 && pacman.y > this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
+  //     this.dx = 0;
+  //     this.dy = -0.25;
+  //   }
+  //   //traveling right, but pacman is right, and there's no barrier to the left
+  //   if(this.dx > 0 && pacman.x > this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
+  //     this.dy = 0;
+  //     this.dx = -0.25;
+  //   }
+  //   //traveling left, but pacman is left, and there's no barrier to the right
+  //   if(this.dx < 0 && pacman.x < this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
+  //     this.dy = 0;
+  //     this.dx = 0.25;
+  //   }
+  //   //traveling up and bump into a barrier
+  //   if(this.dy < 0 && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9){
+  //     this.y = Math.ceil(this.y);
+  //     this.x = Math.round(this.x);
+  //     //stop traveling vertically
+  //     this.dy = 0;
+  //     //if pacman's to the left
+  //       if(pacman.x<this.x){
+  //         //if pacman is to the left, go right if able
+  //         if(coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
+  //           this.dx = 0.25;
+  //         }
+  //         //otherwise just go back down
+  //         else {
+  //           this.dy = 0.25;
+  //         }
+  //       }
+  //       //otherwise, pacman is to the right
+  //       else {
+  //         //go left if able
+  //         if(coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
+  //           this.dx = -0.25;
+  //         }
+  //         else {
+  //           this.dy = 0.25;
+  //         }
+  //       }
+  //     }
+  //   //traveling down and bump into a barrier
+  //   if(this.dy>0 && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
+  //     this.y = Math.floor(this.y);
+  //     this.x = Math.round(this.x);
+  //     //stop traveling vertically
+  //     this.dy = 0;
+  //     //if pacman is left
+  //     if(pacman.x<this.x){
+  //       //if pacman is to the left, go right if able
+  //       if(coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
+  //         this.dx = 0.25;
+  //       }
+  //       //otherwise just go back up
+  //       else {
+  //         this.dy = -0.25;
+  //       }
+  //     }
+  //     //otherwise, pacman is to the right
+  //     else {
+  //       //go left if able
+  //       if(coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
+  //         this.dx = -0.25;
+  //       }
+  //       else {
+  //         this.dy = -0.25;
+  //       }
+  //     }
+  //   }
+  //   //if traveling right and bump into a barrier
+  //   if(this.dx>0 && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
+  //     this.x = Math.floor(this.x);
+  //     this.y = Math.round(this.y);
+  //     this.dx = 0;
+  //     //if pacman is up
+  //     if(pacman.y<this.y){
+  //       //go down if able
+  //       if(coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
+  //         this.dy = 0.25;
+  //       }
+  //       //otherwise just go back left
+  //       else {
+  //         this.dx = -0.25;
+  //       }
+  //     }
+  //     //otherwise, pacman is down
+  //     else {
+  //       //go up if able
+  //       if(coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
+  //         this.dy = -0.25;
+  //       }
+  //       else {
+  //         this.dx = -0.25;
+  //       }
+  //     }
+  //   }
+  //   //if traveling left and bump into a barrier
+  //   if(this.dx<0 && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
+  //     this.x = Math.ceil(this.x);
+  //     this.y = Math.round(this.y);
+  //     this.dx = 0;
+  //     //if pacman is up
+  //     if(pacman.y<this.y){
+  //       //go down if able
+  //       if(coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
+  //         this.dy = 0.25;
+  //       }
+  //       //otherwise just go back right
+  //       else {
+  //         this.dx = 0.25;
+  //       }
+  //     }
+  //     //otherwise, pacman is down
+  //     else {
+  //       //go up if able
+  //       if(coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
+  //         this.dy = -0.25;
+  //       }
+  //       else {
+  //         this.dx = 0.25;
+  //       }
+  //     }
+  //   }
+  //
+  //   this.x += this.dx;
+  //   this.y += this.dy;
+  //
+  //
+  //   this.dx = 0;
+  //   this.dy = 0.1;
+  //   this.x += this.dx;
+  //   this.y += this.dy;
+  //   displayGhosts(ghosts);
+  //
+  // }
   this.escape = function(){
     //this code will work as long as startpoint is above the ghost box
     if(this.boxHelp == false){
-      //if you want to go right and are able to
+      this.dx = -0.25;
+      // if you want to go right and are able to
       if(this.x < this.startpoint.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1] != 9){
+        this.y = Math.round(this.y);
         this.dy = 0;
         this.dx = 0.25;
       }
-      //but if right is blocked
+      // //but if right is blocked
       else if(this.x < this.startpoint.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1] == 9){
         this.dx = 0;
       }
-      //if you want to go left and are able to
+      // //if you want to go left and are able to
       if(this.x > this.startpoint.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1] != 9){
+        this.y = Math.round(this.y);
         this.dy = 0;
         this.dx = -0.25;
       }
-      //but if left is blocked
+      // //but if left is blocked
       else if(this.x > this.startpoint.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1] == 9){
         this.dx = 0;
       }
-      //if you want to go up and are able to
+      // //if you want to go up and are able to
       if(this.y > this.startpoint.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)] != 9){
         this.x = Math.round(this.x);
         this.dx = 0;
         this.dy = -0.25;
       }
-      //but if up is blocked
+      // //but if up is blocked
       else if(this.y > this.startpoint.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)] == 9){
         this.dy = 0;
       }
-      //if you want to go down and are able to
+      // //if you want to go down and are able to
       if(this.y < this.startpoint.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)] != 9){
         this.x = Math.round(this.x);
         this.dx = 0;
         this.dy = 0.25;
       }
-      //but if down is blocked
+      // //but if down is blocked
       else if(this.y < this.startpoint.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)] == 9){
         this.dy=0;
       }
@@ -153,9 +306,6 @@ function Ghost(name, x, y){
       displayGhosts(ghosts);
       if(this.y == this.startpoint.y && this.x == this.startpoint.x){
         this.freedom = true;
-        // console.log("freedom", this.x, this.y);
-        // displayGhosts(ghosts);
-        // huntingGhosts(this);
       }
     }
     else {
@@ -195,19 +345,17 @@ function Ghost(name, x, y){
       this.x += this.dx;
       this.y += this.dy;
       displayGhosts(ghosts);
-
     }
   }
   this.hunt = function(){
     if(this.jiggleVertical > 4){
-      //stop moving vertically
       this.dy = 0;
       //if left is open and right is blocked, go left
-      if(coinsMap[Math.round(this.y)][Math.round(this.x)-1]!=9 && coinsMap[Math.round(this.y)][Math.round(this.x)+1]==9){
+      if(coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9 && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
         this.dx=-0.25;
       }
       //if right is open and left is blocked, go right
-      else if(coinsMap[Math.round(this.y)][Math.round(this.x)+1]!=9 && coinsMap[Math.round(this.y)][Math.round(this.x)-1]==9){
+      else if(coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9 && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
         this.dx=0.25;
       }
       //if both are open, randomly select
@@ -220,17 +368,16 @@ function Ghost(name, x, y){
           this.dx = 0.25;
         }
       }
-      // console.log("stop the jiggling!");
     }
     if(this.jiggleHorizontal > 4){
       //stop moving horizontally
       this.dx = 0;
       //if up is open and down is blocked, go up
-      if(coinsMap[Math.round(this.y-1)][Math.round(this.x)]!=9 && coinsMap[Math.round(this.y)+1][Math.round(this.x)]==9){
+      if(coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9 && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
         this.dy=-0.25;
       }
       //if down is open and up is blocked, go down
-      else if(coinsMap[Math.round(this.y)+1][Math.round(this.x)]!=9 && coinsMap[Math.round(this.y)-1][Math.round(this.x)]==9){
+      else if(coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9 && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9){
         this.dy=0.25;
       }
       //if both are open, randomly select
@@ -243,10 +390,9 @@ function Ghost(name, x, y){
           this.dy = 0.25;
         }
       }
-      // console.log("stop the jiggling!");
     }
     // traveling up, but pacman is down, and there's no barrier below
-    if(this.dy < 0 && pacman.y > this.y && coinsMap[Math.round(this.y)+1][Math.round(this.x)]!=9){
+    if(this.dy < 0 && pacman.y > this.y && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
       this.jiggleHorizontal = 0;
       //get ghost onto right track
       // this.x=Math.round(this.x);
@@ -257,7 +403,7 @@ function Ghost(name, x, y){
       this.jiggleVertical++;
     }
     //traveling down, but pacman is up, and there's no barrier above
-    if(this.dy > 0 && pacman.y<this.y && coinsMap[Math.round(this.y)-1][Math.round(this.x)]!=9){
+    if(this.dy > 0 && pacman.y<this.y && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
       this.jiggleHorizontal=0;
       //get ghost onto right track
       // this.x = Math.round(this.x);
@@ -268,7 +414,7 @@ function Ghost(name, x, y){
       this.jiggleVertical++;
     }
     //traveling right, but pacman is left, and there's no barrier to the left
-    if(this.dx > 0 && pacman.x<this.x && coinsMap[Math.round(this.y)][Math.round(this.x)-1]!=9){
+    if(this.dx > 0 && pacman.x<this.x && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
       this.jiggleVertical = 0;
       //get ghost onto right track
       // this.x=Math.round(this.x);
@@ -279,7 +425,7 @@ function Ghost(name, x, y){
       this.jiggleHorizontal++;
     }
     //traveling left, but pacman is right, and there's no barrier to the right
-    if(this.dx <0 && pacman.x>this.x && coinsMap[Math.round(this.y)][Math.round(this.x)+1]!=9){
+    if(this.dx <0 && pacman.x>this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
       this.jiggleVertical = 0;
       //get ghost onto right track
       // this.x = Math.round(this.x);
@@ -290,10 +436,10 @@ function Ghost(name, x, y){
       this.jiggleHorizontal++;
     }
     //traveling up and bump into a barrier
-    if(this.dy<0 && coinsMap[Math.floor(this.y)-1][Math.round(this.x)]==9){
+    if(this.dy<0 && coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]==9){
       this.jiggleHorizontal=0;
       //get ghost in right spot
-      this.y = Math.floor(this.y);
+      this.y = Math.ceil(this.y);
       this.x = Math.round(this.x);
       //stop traveling vertically
       this.dy = 0;
@@ -306,7 +452,7 @@ function Ghost(name, x, y){
         //if pacman is above, find out if pacman is to the left
         if(pacman.x<this.x){
           //if pacman is to the left, go left if it's not a barrier
-          if(coinsMap[Math.round(this.y)][Math.round(this.x)-1]!=9){
+          if(coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
             this.dx = -0.25;
             this.jiggleVertical=0;
           }
@@ -319,7 +465,7 @@ function Ghost(name, x, y){
         //otherwise, pacman is to the right
         else {
           //go right if able
-          if(coinsMap[Math.round(this.y)][Math.round(this.x)+1]!=9){
+          if(coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
             this.dx = 0.25;
             this.jiggleVertical = 0;
           }
@@ -332,10 +478,10 @@ function Ghost(name, x, y){
     // console.log("fifth");
     }
     //traveling down and bump into a barrier
-    if(this.dy>0 && coinsMap[Math.ceil(this.y)+1][Math.round(this.x)]==9){
+    if(this.dy>0 && coinsMap[Math.floor(this.y)+1][Math.round(this.x)]==9){
       this.jiggleHorizontal = 0;
       //move ghost to right spot
-      this.y = Math.ceil(this.y);
+      this.y = Math.floor(this.y);
       this.x = Math.round(this.x);
       //stop traveling vertically
       this.dy = 0;
@@ -348,7 +494,7 @@ function Ghost(name, x, y){
         //if pacman is below, find out if pacman is to the left
         if(pacman.x<this.x){
           //if pacman is to the left, go left if it's not a barrier
-          if(coinsMap[Math.round(this.y)][Math.round(this.x)-1]!=9){
+          if(coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]!=9){
             this.dx = -0.25;
             this.jiggleVertical=0;
           }
@@ -361,7 +507,7 @@ function Ghost(name, x, y){
         //otherwise, pacman is to the right
         else {
           //go right if able
-          if(coinsMap[Math.round(this.y)][Math.round(this.x)+1]!=9){
+          if(coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9){
             this.dx = 0.25;
             this.jiggleVertical = 0;
           }
@@ -374,10 +520,10 @@ function Ghost(name, x, y){
     // console.log("sixth");
     }
     //if traveling right and bump into a barrier
-    if(this.dx>0 && coinsMap[Math.round(this.y)][Math.ceil(this.x+1)]==9){
+    if(this.dx>0 && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]==9){
       this.jiggleVertical = 0;
       //put ghost in right spot
-      this.x = Math.ceil(this.x);
+      this.x = Math.floor(this.x);
       this.y = Math.round(this.y);
       //stop traveling horizontally
       this.dx = 0;
@@ -390,7 +536,7 @@ function Ghost(name, x, y){
         //if pacman is to the right, find out if pacman is above
         if(pacman.y<this.y){
           //if pacman is above, go up if it's not a barrier
-          if(coinsMap[Math.round(this.y-1)][Math.round(this.x)]!=9){
+          if(coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
             this.dy = -0.25;
             this.jiggleHorizontal=0;
           }
@@ -403,7 +549,7 @@ function Ghost(name, x, y){
         //otherwise, pacman is below
         else {
           //go down if able
-          if(coinsMap[Math.round(this.y+1)][Math.round(this.x)]!=9){
+          if(coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
             this.dy = 0.25;
             this.jiggleHorizontal=0;
           }
@@ -416,10 +562,10 @@ function Ghost(name, x, y){
     // console.log("seventh");
     }
     //if traveling left and bump into a barrier
-    if(this.dx<0 && coinsMap[Math.round(this.y)][Math.floor(this.x-1)]==9){
+    if(this.dx<0 && coinsMap[Math.round(this.y)][Math.ceil(this.x)-1]==9){
       this.jiggleVertical = 0;
       //put ghost in right spot
-      this.x = Math.floor(this.x);
+      this.x = Math.ceil(this.x);
       this.y=Math.round(this.y);
       //stop traveling horizontally
       this.dx = 0;
@@ -432,7 +578,7 @@ function Ghost(name, x, y){
         //if pacman is to the left, find out if pacman is above
         if(pacman.y<this.y){
           //if pacman is above, go up if it's not a barrier
-          if(coinsMap[Math.round(this.y-1)][Math.round(this.x)]!=9){
+          if(coinsMap[Math.ceil(this.y)-1][Math.round(this.x)]!=9){
             this.dy = -0.25;
             this.jiggleHorizontal=0;
           }
@@ -445,7 +591,7 @@ function Ghost(name, x, y){
         //otherwise, pacman is below
         else {
           //go down if able
-          if(coinsMap[Math.round(this.y+1)][Math.round(this.x)]!=9){
+          if(coinsMap[Math.floor(this.y)+1][Math.round(this.x)]!=9){
             this.dy = 0.25;
             this.jiggleHorizontal=0;
           }
@@ -477,7 +623,7 @@ function Ghost(name, x, y){
 }
 
 function nextRound(){
-  //first I want to wait two seconds, then reset ghosts and pacman's positions
+  //first wait two seconds, then reset ghosts and pacman's positions
   setTimeout(function(){
     pacman.alive = true;
     ghostSetUp(ghosts);
@@ -564,9 +710,13 @@ function findTrappedGhosts(array){
     if(array[i].freedom == false){
       var ghostEscape = setInterval(array[i].escape(), 100);
     }
-    if(array[i].freedom == true){
+    if(array[i].freedom == true && array[i].flee == false){
       clearInterval(ghostEscape);
-      var huntingGhost = setInterval(array[i].hunt());
+      var huntingGhost = setInterval(array[i].hunt(), 100);
+    }
+    if(array[i].freedom == true && array[i].flee == true){
+      clearInterval(huntingGhost);
+      var fleeingGhost = setInterval(array[i].runaway(), 100);
     }
   }
 }
@@ -814,12 +964,16 @@ document.onkeydown = function(e){
    document.getElementById('pinky').setAttribute("xlink:href", "pinky.gif");
    document.getElementById('inky').setAttribute("xlink:href", "inky.gif");
    document.getElementById('clyde').setAttribute("xlink:href", "clyde.gif");
+   for(var i=0; i<ghosts.length; i++){
+     ghosts[i].flee = false;
+   }
  }
  function detectPowerPellet(){
    if(pacman.x==1 && pacman.y==3 && pacman.powerPellets[0]==false){
      pacman.powerPellets[0]=true;
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+       ghosts[i].flee = true;
      }
      setTimeout(powerGone, 8000);
    }
@@ -827,6 +981,7 @@ document.onkeydown = function(e){
      pacman.powerPellets[1]=true;
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+       ghosts[i].flee = true;
      }
      setTimeout(powerGone, 8000);
    }
@@ -834,6 +989,7 @@ document.onkeydown = function(e){
      pacman.powerPellets[2]=true;
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+       ghosts[i].flee = true;
      }
      setTimeout(powerGone, 8000);
    }
@@ -841,6 +997,7 @@ document.onkeydown = function(e){
      pacman.powerPellets[3]=true;
      for(var i=0; i<ghosts.length; i++){
        document.getElementById(ghosts[i].name).setAttribute("xlink:href", "deadghost.gif");
+       ghosts[i].flee = true;
      }
      setTimeout(powerGone, 8000);
    }
