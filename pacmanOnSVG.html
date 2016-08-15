@@ -200,11 +200,17 @@ function Ghost(name, x, y){
     }
   },
   this.hunt = function(){
-    //target to the right, no barrier
+
+    if(this.dx < 0 || this.dx > 0){
+      this.dy = 0;
+    }
+      //target to the right, no barrier, right is not banned
     if(this.destination.x > this.x && coinsMap[Math.round(this.y)][Math.floor(this.x)+1]!=9 && this.badDirection !=3){
+      //unban any vertical directions
       if(this.badDirection == 12 || this.badDirection == 6){
         this.badDirection = null;
       }
+      //go right
       this.dx = 0.25;
       this.dy=0;
     }
@@ -292,11 +298,9 @@ function Ghost(name, x, y){
       }
     }
     //END NEW STUFF
-    else if(this.destination.x == this.x && this.destination.y == this.y){
-      document.getElementById('whoseTurn').innerHTML = "found my spot";
-      this.dx = 0;
-      this.dy = 0;
-
+    else if(Math.abs(this.destination.x - this.x) < 2 && Math.abs(this.destination.y - this.y)<2){
+      this.destination.x = pacman.x;
+      this.destination.y = pacman.y;
     }
 
     this.x += this.dx;
